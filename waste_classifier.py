@@ -1,8 +1,7 @@
 import os
+import cv2
 import cvzone
 from cvzone.ClassificationModule import Classifier
-import cv2
-import numpy as np
 
 # Initialize video capture from webcam
 cap = cv2.VideoCapture(0)
@@ -29,18 +28,21 @@ classIDBin = 0
 # Load all waste images
 imgWasteList = []
 pathFolderWaste = "Resources/Waste"
-pathList = os.listdir(pathFolderWaste)
-for path in pathList:
-    img = cv2.imread(os.path.join(pathFolderWaste, path), cv2.IMREAD_UNCHANGED)
-    if img is not None:
-        imgWasteList.append(img)
+for waste_category in os.listdir(pathFolderWaste):
+    category_path = os.path.join(pathFolderWaste, waste_category)
+    if os.path.isdir(category_path):
+        for filename in os.listdir(category_path):
+            img_path = os.path.join(category_path, filename)
+            img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+            if img is not None:
+                imgWasteList.append(img)
 
 # Load all bin images
 imgBinsList = []
 pathFolderBins = "Resources/Bins"
-pathList = os.listdir(pathFolderBins)
-for path in pathList:
-    img = cv2.imread(os.path.join(pathFolderBins, path), cv2.IMREAD_UNCHANGED)
+for filename in os.listdir(pathFolderBins):
+    img_path = os.path.join(pathFolderBins, filename)
+    img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
     if img is not None:
         imgBinsList.append(img)
 
@@ -57,7 +59,10 @@ classDic = {
     8: 2,
 }
 
-while True:
+# Variable to control loop
+running = True
+
+while running:
     success, img = cap.read()
     if not success:
         print("Failed to capture image")
@@ -110,13 +115,19 @@ while True:
         alpha = 0.6  # Transparency factor
         imgBackground = cv2.addWeighted(overlay, alpha, imgBackground, 1 - alpha, 0)
         cv2.putText(imgBackground, "Human Detected!", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3)
-        cv2.putText(imgBackground, "Please show the waste.", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, .5,
-                    (255, 255, 255), 2)
+        cv2.putText(imgBackground, "Please show the waste.", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, .5, (255, 255, 255), 2)
 
     # Display the final output
     cv2.imshow("Output", imgBackground)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+
+    # Check for 'q' key press to exit
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('q'):
         break
+
+    # Check if stop button clicked (for example, 's' key)
+    if key == ord('s'):
+        running = False
 
 # Release resources
 cap.release()
