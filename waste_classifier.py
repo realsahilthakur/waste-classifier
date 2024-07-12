@@ -3,7 +3,6 @@ import cvzone
 from cvzone.ClassificationModule import Classifier
 import cv2
 import numpy as np
-import playsound  # For playing sound alerts
 
 # Initialize video capture from webcam
 cap = cv2.VideoCapture(0)
@@ -58,22 +57,6 @@ classDic = {
     8: 2,
 }
 
-
-# Function to play sound
-def play_sound(file):
-    playsound.playsound(file)
-
-
-# Log file for classified items
-log_file = "classification_log.txt"
-
-
-# Function to log classifications
-def log_classification(classID):
-    with open(log_file, "a") as file:
-        file.write(f"Class ID: {classID}, Time: {time.ctime()}\n")
-
-
 while True:
     success, img = cap.read()
     if not success:
@@ -103,7 +86,6 @@ while True:
     # Get prediction from classifier
     prediction = classifier.getPrediction(img)
     classID = prediction[1]
-    confidence = prediction[2]  # Assuming confidence score is available
     print(classID)
 
     if classID != 0 and not human_present:
@@ -117,8 +99,6 @@ while True:
     # Overlay bin image if no human is detected
     if not human_present:
         imgBackground = cvzone.overlayPNG(imgBackground, imgBinsList[classIDBin], (895, 374))
-        log_classification(classID)  # Log the classification
-        play_sound('Resources/sounds/classified.wav')  # Play classification sound
 
     # Overlay resized webcam image
     imgBackground[148:148 + 340, 159:159 + 454] = imgResize
@@ -129,15 +109,9 @@ while True:
         cv2.rectangle(overlay, (0, 0), (imgBackground.shape[1], 130), (0, 0, 255), -1)
         alpha = 0.6  # Transparency factor
         imgBackground = cv2.addWeighted(overlay, alpha, imgBackground, 1 - alpha, 0)
-        cv2.putText(imgBackground, "Human Detected!", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3)
-        cv2.putText(imgBackground, "Please show the image of waste.", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1,
+        cv2.putText(imgBackground, "Human Detected!", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3)
+        cv2.putText(imgBackground, "Please show the image of waste.", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, .5,
                     (255, 255, 255), 2)
-        play_sound('Resources/sounds/human_detected.wav')  # Play human detection sound
-
-    # Display real-time confidence score
-    if not human_present:
-        cv2.putText(imgBackground, f"Confidence: {confidence * 100:.2f}%", (50, 450), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                    (0, 255, 0), 2)
 
     # Display the final output
     cv2.imshow("Output", imgBackground)
