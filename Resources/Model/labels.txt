@@ -7,3 +7,4 @@
 6 Battery
 7 Vegetable leaf
 8 Apple
+0 Nothing

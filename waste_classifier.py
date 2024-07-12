@@ -8,6 +8,7 @@ cap = cv2.VideoCapture(0)
 classifier = Classifier('Resources/Model/keras_model.h5', 'Resources/Model/labels.txt')
 imgArrow = cv2.imread('Resources/arrow.png',cv2.IMREAD_UNCHANGED)
 classIDBin = 0
+
 #Import all the waste images
 imgWasteList = []
 pathFolderWaste = "Resources/Waste"
@@ -15,7 +16,7 @@ pathList = os.listdir(pathFolderWaste)
 for path in pathList:
         imgWasteList.append(cv2.imread(os.path.join(pathFolderWaste, path), cv2.IMREAD_UNCHANGED))
 
-#Import all the waste images
+#Import all the bin images
 imgBinsList = []
 pathFolderBins = "Resources/Bins"
 pathList = os.listdir(pathFolderBins)
@@ -35,7 +36,9 @@ classDic ={0: None,
            5: 1,
            6: 1,
            7: 2,
-           8: 2}
+           8: 2,
+           }
+
 while True:
         _, img = cap.read()
         imgResize = cv2.resize(img, (454, 340))
