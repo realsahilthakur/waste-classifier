@@ -110,7 +110,7 @@ while True:
         alpha = 0.6  # Transparency factor
         imgBackground = cv2.addWeighted(overlay, alpha, imgBackground, 1 - alpha, 0)
         cv2.putText(imgBackground, "Human Detected!", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3)
-        cv2.putText(imgBackground, "Please show the image of waste.", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, .5,
+        cv2.putText(imgBackground, "Please show the waste.", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, .5,
                     (255, 255, 255), 2)
 
     # Display the final output
